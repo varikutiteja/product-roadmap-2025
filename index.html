@@ -1,1 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Roadmap 2025</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9f9f7; color: #1a1a1a; padding: 2rem; }
+    .top { display: flex; align-items: center; justify-content: space-between; padding-bottom: 1rem; border-bottom: 1px solid #e5e5e0; margin-bottom: 1rem; flex-wrap: wrap; gap: 12px; }
+    .top h1 { font-size: 20px; font-weight: 600; }
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pill { font-size: 12px; padding: 5px 14px; border-radius: 20px; border: 1px solid #ddd; background: #fff; color: #555; cursor: pointer; transition: all .15s; }
+    .pill.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.25rem; }
+    .metric { background: #fff; border: 1px solid #e5e5e0; border-radius: 10px; padding: 14px 16px; }
+    .metric-label { font-size: 11px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .05em; }
+    .metric-val { font-size: 24px; font-weight: 600; }
+    .quarters { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .quarter { background: #f0efea; border-radius: 12px; padding: 14px; }
+    .q-label { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; }
+    .item { background: #fff; border: 1px solid #e5e5e0; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; cursor: pointer; transition: border-color .15s; }
+    .item:hover { border-color: #aaa; }
+    .item-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .item-name { font-size: 13px; font-weight: 600; }
+    .badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+    .b-design { background: #EEEDFE; color: #3C3489; }
+    .b-eng { background: #E1F5EE; color: #085041; }
+    .b-data { background: #FAEEDA; color: #633806; }
+    .b-growth { background: #FAECE7; color: #712B13; }
+    .item-meta { font-size: 11px; color: #999; margin-bottom: 6px; }
+    .progress-wrap { height: 4px; background: #eee; border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
+    .progress-bar { height: 100%; border-radius: 4px; }
+    .status-row { display: flex; gap: 5px; flex-wrap: wrap; }
+    .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; border: 1px solid #e5e5e0; color: #666; }
+    .detail-panel { background: #fff; border: 1px solid #ccc; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; display: none; }
+    .detail-panel.open { display: block; }
+    .dp-title { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+    .dp-desc { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 14px; }
+    .dp-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .dp-cell label { font-size: 11px; color: #999; display: block; margin-bottom: 2px; text-transform: uppercase; }
+    .dp-cell p { font-size: 13px; font-weight: 500; }
+    .close-btn { float: right; font-size: 12px; color: #666; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; padding: 3px 10px; background: none; }
+    @media(max-width: 700px) { .quarters, .summary { grid-template-columns: 1fr 1fr; } }
+    @media(max-width: 440px) { .quarters, .summary { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
 
+<div class="top">
+  <h1>Product Roadmap — 2025</h1>
+  <div class="filters">
+    <span class="pill active" onclick="filter(this,'all')">All</span>
+    <span class="pill" onclick="filter(this,'design')">Design</span>
+    <span class="pill" onclick="filter(this,'eng')">Engineering</span>
+    <span class="pill" onclick="filter(this,'data')">Data</span>
+    <span class="pill" onclick="filter(this,'growth')">Growth</span>
+  </div>
+</div>
+
+<div class="summary">
+  <div class="metric"><div class="metric-label">Total initiatives</div><div class="metric-val" id="m-total">16</div></div>
+  <div class="metric"><div class="metric-label">On track</div><div class="metric-val" id="m-on" style="color:#0F6E56">0</div></div>
+  <div class="metric"><div class="metric-label">At risk</div><div class="metric-val" id="m-risk" style="color:#BA7517">0</div></div>
+  <div class="metric"><div class="metric-label">Completed</div><div class="metric-val" id="m-done">0</div></div>
+</div>
+
+<div id="detail" class="detail-panel"></div>
+<div class="quarters" id="board"></div>
+
+<script>
+const items = [
+  {q:1,name:"Onboarding redesign",team:"design",owner:"Sara K.",priority:"High",status:"Completed",progress:100,due:"Mar 15",desc:"Full redesign of the user onboarding flow. Reduced drop-off by 34% through progressive disclosure patterns and contextual tooltips."},
+  {q:1,name:"Auth v2 migration",team:"eng",owner:"Dev T.",priority:"High",status:"Completed",progress:100,due:"Mar 28",desc:"Migrated auth layer to OAuth 2.0. Improved security posture and enabled SSO integrations for enterprise customers."},
+  {q:1,name:"Retention dashboard",team:"data",owner:"Mia R.",priority:"Med",status:"On track",progress:85,due:"Mar 30",desc:"Build analyst-facing dashboard tracking D1/D7/D30 retention cohorts. Feeds directly into the growth team's weekly review."},
+  {q:1,name:"SEO content sprint",team:"growth",owner:"James L.",priority:"Med",status:"At risk",progress:55,due:"Mar 31",desc:"Publish 20 long-form articles targeting high-intent keywords. Currently 2 articles behind schedule due to SME availability."},
+  {q:2,name:"Mobile app v3",team:"design",owner:"Sara K.",priority:"High",status:"On track",progress:60,due:"Jun 10",desc:"Major redesign of iOS and Android apps. Introducing bottom nav, gesture shortcuts, and redesigned home feed."},
+  {q:2,name:"API rate limiting",team:"eng",owner:"Dev T.",priority:"High",status:"On track",progress:70,due:"May 20",desc:"Implement tiered rate limiting per API plan. Required for launch of new enterprise tier."},
+  {q:2,name:"Funnel analysis tool",team:"data",owner:"Mia R.",priority:"High",status:"On track",progress:40,due:"Jun 28",desc:"Self-serve funnel builder for PMs and marketers. Drag-and-drop event sequencing with cohort filtering."},
+  {q:2,name:"Referral program",team:"growth",owner:"James L.",priority:"Med",status:"At risk",progress:30,due:"Jun 15",desc:"Build two-sided referral program with reward tracking. Delayed by legal review of incentive structure."},
+  {q:3,name:"Design system v2",team:"design",owner:"Sara K.",priority:"Med",status:"On track",progress:10,due:"Sep 5",desc:"Unify component library across web and mobile. Targeting 60% reduction in design-dev handoff time."},
+  {q:3,name:"Infra cost reduction",team:"eng",owner:"Dev T.",priority:"High",status:"On track",progress:5,due:"Sep 30",desc:"Audit and optimize cloud spend. Target: 20% reduction through right-sizing and reserved instance planning."},
+  {q:3,name:"Predictive churn model",team:"data",owner:"Mia R.",priority:"High",status:"On track",progress:0,due:"Aug 30",desc:"ML model to predict 30-day churn probability per user. Outputs feed into lifecycle email triggers."},
+  {q:3,name:"Paid acquisition tests",team:"growth",owner:"James L.",priority:"Med",status:"At risk",progress:0,due:"Sep 20",desc:"Run structured paid media experiments across Google and Meta. Dependent on creative team capacity."},
+  {q:4,name:"Accessibility audit",team:"design",owner:"Sara K.",priority:"Med",status:"On track",progress:0,due:"Nov 30",desc:"Full WCAG 2.1 AA audit and remediation sprint across all product surfaces."},
+  {q:4,name:"Search v2",team:"eng",owner:"Dev T.",priority:"High",status:"On track",progress:0,due:"Dec 15",desc:"Replace current keyword search with semantic search using embeddings. Targeting 50% relevancy improvement."},
+  {q:4,name:"Revenue attribution",team:"data",owner:"Mia R.",priority:"High",status:"On track",progress:0,due:"Dec 10",desc:"Multi-touch attribution model connecting marketing spend to revenue. Will retire current last-click model."},
+  {q:4,name:"Partner integrations",team:"growth",owner:"James L.",priority:"Med",status:"On track",progress:0,due:"Dec 20",desc:"Launch 5 native integrations with partner tools (Slack, Notion, HubSpot, Zapier, Salesforce)."},
+];
+
+const teamColor = {design:"b-design",eng:"b-eng",data:"b-data",growth:"b-growth"};
+const teamLabel = {design:"Design",eng:"Engineering",data:"Data",growth:"Growth"};
+const barColor = {Completed:"#1D9E75","On track":"#378ADD","At risk":"#EF9F27"};
+let activeTeam = "all";
+
+function filter(el, team) {
+  document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+  el.classList.add("active");
+  activeTeam = team;
+  render();
+}
+
+function openDetail(idx) {
+  const it = items[idx];
+  const panel = document.getElementById("detail");
+  panel.innerHTML = `<button class="close-btn" onclick="closeDetail()">close</button>
+    <div class="dp-title">${it.name}</div>
+    <div class="dp-desc">${it.desc}</div>
+    <div class="dp-grid">
+      <div class="dp-cell"><label>Owner</label><p>${it.owner}</p></div>
+      <div class="dp-cell"><label>Priority</label><p>${it.priority}</p></div>
+      <div class="dp-cell"><label>Status</label><p>${it.status}</p></div>
+      <div class="dp-cell"><label>Due date</label><p>${it.due}</p></div>
+      <div class="dp-cell"><label>Progress</label><p>${it.progress}%</p></div>
+      <div class="dp-cell"><label>Team</label><p>${teamLabel[it.team]}</p></div>
+    </div>`;
+  panel.classList.add("open");
+}
+
+function closeDetail() { document.getElementById("detail").classList.remove("open"); }
+
+function render() {
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  const qlabels = ["Q1 · Jan – Mar","Q2 · Apr – Jun","Q3 · Jul – Sep","Q4 · Oct – Dec"];
+  let total=0, on=0, risk=0, done=0;
+  for (let q = 1; q <= 4; q++) {
+    const filtered = items.filter(it => it.q === q && (activeTeam === "all" || it.team === activeTeam));
+    filtered.forEach(it => {
+      total++;
+      if (it.status === "Completed") done++;
+      else if (it.status === "On track") on++;
+      else risk++;
+    });
+    const col = document.createElement("div");
+    col.className = "quarter";
+    col.innerHTML = `<div class="q-label">${qlabels[q-1]}</div>` + (filtered.length === 0
+      ? `<div style="font-size:12px;color:#aaa;padding:8px 0">No items</div>`
+      : filtered.map(it => {
+          const gi = items.indexOf(it);
+          return `<div class="item" onclick="openDetail(${gi})">
+            <div class="item-top">
+              <span class="item-name">${it.name}</span>
+              <span class="badge ${teamColor[it.team]}">${teamLabel[it.team]}</span>
+            </div>
+            <div class="item-meta">${it.owner} · Due ${it.due}</div>
+            <div class="progress-wrap"><div class="progress-bar" style="width:${it.progress}%;background:${barColor[it.status]}"></div></div>
+            <div class="status-row">
+              <span class="tag">${it.status}</span>
+              <span class="tag">${it.priority} priority</span>
+              <span class="tag">${it.progress}%</span>
+            </div>
+          </div>`;
+        }).join(""));
+    board.appendChild(col);
+  }
+  document.getElementById("m-total").textContent = total;
+  document.getElementById("m-on").textContent = on;
+  document.getElementById("m-risk").textContent = risk;
+  document.getElementById("m-done").textContent = done;
+}
+render();
+</script>
+</body>
+</html>
